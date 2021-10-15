@@ -23,7 +23,18 @@ Value *cons(Value *newCar, Value *newCdr) {
 
 // Display the contents of the linked list to the screen in some kind of
 // readable format
-void display(Value *list);
+void display(Value *list) {
+    switch (list->type) {
+        case INT_TYPE:
+            printf("%i", list->i);
+            break;
+        case DOUBLE_TYPE:
+            printf("%g", list->d);
+            break;
+        case STR_TYPE:
+            printf("%s", list->s);
+            break;
+}
 
 // Return a new list that is the reverse of the one that is passed in. All
 // content within the list should be duplicated; there should be no shared
