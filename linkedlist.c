@@ -1,15 +1,25 @@
 
 #include <stdbool.h>
 #include "value.h"
+#include <stdlib.h>
 
 #ifndef _LINKEDLIST
 #define _LINKEDLIST
 
 // Create a new NULL_TYPE value node.
-Value *makeNull();
+Value *makeNull() {
+    Value null;
+    null.c.cdr = NULL;
+
+}
 
 // Create a new CONS_TYPE value node.
-Value *cons(Value *newCar, Value *newCdr);
+Value *cons(Value *newCar, Value *newCdr) {
+    Value *result;
+    (*result).c.car = newCar;
+    (*result).c.cdr = newCdr;
+    return result;
+}
 
 // Display the contents of the linked list to the screen in some kind of
 // readable format
