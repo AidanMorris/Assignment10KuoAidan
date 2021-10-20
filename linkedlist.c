@@ -31,6 +31,9 @@ bool isNull(Value *value) {
 Value *cons(Value *newCar, Value *newCdr) {
     //make the cell.
     //structs are value types, so no need to dereference.
+
+    
+
     struct ConsCell new_cell;
     new_cell.car = newCar;
     new_cell.cdr = newCdr;
@@ -69,7 +72,7 @@ Value *car(Value *list) {
 }
 
 Value *cdr(Value *list) {
-    assert(list->type != NULL_TYPE);
+    //assert(list->type != NULL_TYPE);
     return list->c.cdr;
 }
 
@@ -112,13 +115,12 @@ Value *reverse(Value *list) {
 }
 
 int length(Value *value) {
-    assert(value->type != NULL_TYPE);
 
     int count = 1;//might be 0 here. iffy.
 
     Value* current_value = value;
 
-    while(cdr(current_value)->type == CONS_TYPE){
+    while((cdr(current_value))->type == CONS_TYPE){
         count++;
         current_value = cdr(current_value);
     }
