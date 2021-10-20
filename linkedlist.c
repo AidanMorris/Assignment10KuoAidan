@@ -19,8 +19,9 @@ Once you have done that, you can begin implementing your functions and testing a
 */
 
 Value *makeNull() {
-    Value* new_value;
-    return (Value*) malloc(sizeof(new_value));
+    Value* new_value = malloc(sizeof(Value));
+    new_value->type = NULL_TYPE;
+    return new_value;
 }
 
 bool isNull(Value *value) {
@@ -115,7 +116,7 @@ int length(Value *value) {
 
     Value* current_value = value;
 
-    while((cdr(current_value))->type == CONS_TYPE){
+    while((cdr(current_value))->type != NULL_TYPE){
         count++;
         current_value = cdr(current_value);
     }
