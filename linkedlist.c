@@ -111,12 +111,13 @@ Value *reverse(Value *list) {
 }
 
 int length(Value *value) {
-
+    if(value->type == NULL_TYPE){
+        return 0;
+    }
     int count = 1;//might be 0 here. iffy.
-
     Value* current_value = value;
-
-    while((cdr(current_value))->type != NULL_TYPE){
+    
+    while(cdr(current_value)->type != NULL_TYPE){
         count++;
         current_value = cdr(current_value);
     }
