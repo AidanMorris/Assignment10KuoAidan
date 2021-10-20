@@ -32,11 +32,10 @@ Value *cons(Value *newCar, Value *newCdr) {
     //make the cell.
     //structs are value types, so no need to dereference.
 
-    
+    struct ConsCell* new_cell = malloc(sizeof(Value)*2);
+    new_cell->car = newCar;
+    new_cell->cdr = newCdr;
 
-    struct ConsCell new_cell;
-    new_cell.car = newCar;
-    new_cell.cdr = newCdr;
 
     //make the cons-ted linked list. Set it correctly.
     Value* new_cons_type;
