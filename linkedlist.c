@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include "./value.h"
 #include "./linkedlist.h"
@@ -18,10 +19,30 @@ Once you have done that, you can begin implementing your functions and testing a
 */
 
 Value *makeNull() {
-    return malloc(sizeof(NULL_TYPE));
+    return (Value*) malloc(sizeof(NULL_TYPE));
 }
 
 bool isNull(Value *value) {
     assert(value != NULL && "BAD isNull operation");
     return (value->type == NULL_TYPE);
+}
+
+Value *cons(Value *newCar, Value *newCdr) {
+    
+    //structs are value types, so no need to dereference.
+    struct ConsCell new_cell;
+    new_cell.car = newCar;
+    new_cell.cdr = newCdr;
+
+    //make a cons_type Value. Set it correctly.
+    Value* new_cons_type;
+    new_cons_type->type = CONS_TYPE;
+    new_cons_type-> c = new_cell;
+    
+    //make the space.
+    Value* returned_cons_type = malloc(sizeof(new_cons_type));
+
+    //copy over, and return.
+    *returned_cons_type = *new_cons_type;
+    return returned_cons_type;
 }
