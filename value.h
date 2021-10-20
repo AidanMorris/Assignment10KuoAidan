@@ -1,8 +1,10 @@
 #ifndef _VALUE
 #define _VALUE
 
+//this defines the types included by valueType?
 typedef enum {INT_TYPE, DOUBLE_TYPE, STR_TYPE, CONS_TYPE, NULL_TYPE} valueType;
 
+//Value only includes type and c.
 struct Value {
     valueType type;
     union {
@@ -16,6 +18,7 @@ struct Value {
     };
 };
 
+//defining a new c will make the data overwrite c. type must also be changed.
 
 typedef struct Value Value;
 
