@@ -36,17 +36,13 @@ Value *cons(Value *newCar, Value *newCdr) {
     new_cell->car = newCar;
     new_cell->cdr = newCdr;
 
-
-    //make the cons-ted linked list. Set it correctly.
-    Value* new_cons_type;
-    new_cons_type->type = CONS_TYPE;
-    new_cons_type-> c = new_cell;
     
     //make the space.
-    Value* returned_cons_type = malloc(sizeof(new_cons_type));
+    Value* returned_cons_type = malloc(sizeof(Value)*2);
 
     //copy over, and return.
-    *returned_cons_type = *new_cons_type;
+    returned_cons_type->type = CONS_TYPE;
+    returned_cons_type->c = *new_cell;
     return returned_cons_type;
 }
 
