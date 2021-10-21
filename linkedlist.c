@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "./value.h"
 #include "./linkedlist.h"
+#include <string.h>
 
 /*
 Instead of compiling your code with something like clang -o linkedlist linkedlist.c, 
@@ -30,83 +31,74 @@ bool isNull(Value *value) {
 }
 
 Value *cons(Value *newCar, Value *newCdr) {
-    //make the cell.
-    //structs are value types, so no need to dereference.
 
-    struct ConsCell* new_cell = malloc(sizeof(Value)*2);
-    new_cell->car = newCar;
-    new_cell->cdr = newCdr;
-
-    
-    //make the space.
-    Value* returned_cons_type = malloc(sizeof(Value)*2);
+    Value* returned_cons_type = malloc(sizeof(Value));
 
     //copy over, and return.
     returned_cons_type->type = CONS_TYPE;
-    returned_cons_type->c = *new_cell;
+    returned_cons_type->c.cdr = newCdr;
+    returned_cons_type->c.car = newCar;
+
     return returned_cons_type;
 }
 
-// Return a pointer to the car value for the cons cell 
-// at the head of the given linked list. 
-// Use assertions here to make sure that this is a legitimate operation 
-// (e.g., there is no car value at the head of an empty list).
-
-//The "head" pointer points to the front of your linked list, whatever you choose to call it, should be of type Value *. 
-//If the list is empty, it will point to a Value of type NULL_TYPE; 
-//otherwise, it will point to a Value of type ConsType (i.e., a Value representing a cons cell). 
-//In a non-empty list, the car of the first cons cell points to a Value representing the 
-//first item in the linked list, while the cdr points to a Value of type ConsType, 
-//representing the next cons cell in the linked list (and so on). 
-//At the end of the linked list will be a Value whose cdr variable points to a Value with type NULL_TYPE. 
-//As you may recall, this is very close to how lists are represented in Scheme, under the hood!
-
-
 Value *car(Value *list) {
-    assert(list->type != NULL_TYPE);
+    assert(list->type == CONS_TYPE);
     return list->c.car;
 }
 
 Value *cdr(Value *list) {
-    //assert(list->type != NULL_TYPE);
+    assert(list->type == CONS_TYPE);
     return list->c.cdr;
 }
 
 void display(Value *list) {
-
-    assert(list->type != NULL_TYPE);
-    assert(car(list)->type != NULL_TYPE);//iffy
-    assert(car(list)->type != CONS_TYPE);//iffy
-
-    Value* current_value = list;
-
-    printf("(");
-    
-    while(cdr(current_value)->type!=NULL_TYPE){
-        switch (car(current_value)->type) {
+    //print car
+    switch (list->type) {
         case NULL_TYPE:
             break;
         case CONS_TYPE:
-            break;
+            display(car(list));
+            display(cdr(list));
         case INT_TYPE:
-            printf("%i ", car(current_value)->i);
-            current_value = cdr(current_value);
+            printf("%i ", list->i);
             break;
         case DOUBLE_TYPE:
-            printf("%f ", car(current_value)->d);
-            current_value = cdr(current_value);
+            printf("%f ", list->d);
             break;
         case STR_TYPE:
-            printf("\"%s\" ", car(current_value)->s);
-            current_value = cdr(current_value);
+            printf("\"%s\" ", list->s);
             break;
-        } 
+        default:
+            break;
     }
-    printf(")\n");
+    
 }
 
 Value *reverse(Value *list) {
-    Value* new_list = malloc(sizeof(*list));
+    
+    if(list->type == NULL_TYPE){
+        Value* empty_value = malloc(sizeof(Value));
+        empty_value->type = NULL_TYPE;
+        return empty_value;
+    }
+
+    Value* new_value = malloc(sizeof(Value));
+    while(list->type != NULL_TYPE){
+
+    }
+
+    switch(list->type){
+        case NULL_TYPE:
+            break;
+        case CONS_TYPE:
+            cons(reverse(cdr(list)), reverse(car(list)));
+            break;
+        case STR_TYPE:
+            break;
+    }
+    
+    Value* new_list = malloc(sizeof(Value));
     return new_list;
 }
 
@@ -125,12 +117,18 @@ int length(Value *value) {
 }
 
 void cleanup(Value *list) {
-
-    Value* current_value = list;
-
-    while(cdr(current_value)->type!=NULL_TYPE){
-        if(car(current_value)->type==STR_TYPE){free(car(current_value)->s);}
-        current_value = cdr(current_value);
+    switch(list->type){
+        case NULL_TYPE:
+            break;
+        case CONS_TYPE:
+            cleanup(car(list));
+            cleanup(cdr(list));
+            break;
+        case STR_TYPE:
+            free(list->s);
+            break;
+        default:
+            break;
     }
     free(list);
 }
