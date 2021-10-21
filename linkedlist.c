@@ -75,31 +75,54 @@ void display(Value *list) {
     
 }
 
+Value* makeNewValue(Value* list){
+    Value* new_val = malloc(sizeof(Value));
+    switch(car(list)->type){
+        case NULL_TYPE://comment this out later to see if default handles this for me.
+            new_val->type=NULL_TYPE;
+            break;
+        case STR_TYPE:
+            new_val = memcpy(malloc(sizeof(Value)), list, sizeof(Value));
+            new_val->s = malloc(sizeof(*list->s));
+            strcpy(new_val->s, list->s);
+            break;
+        case CONS_TYPE:
+            new_val = memcpy(malloc(sizeof(Value)), list, sizeof(Value));
+            new_val->c.car = makeNewValue(car(list));
+            new_val->c.cdr = makeNewValue(cdr(list));
+            break;
+        default:
+            new_val = memcpy(malloc(sizeof(Value)), list, sizeof(Value));
+            break;
+    }
+    return new_val;
+}
+
 Value *reverse(Value *list) {
-    
-    if(list->type == NULL_TYPE){
-        Value* empty_value = malloc(sizeof(Value));
+
+    Value* empty_value = malloc(sizeof(Value));
         empty_value->type = NULL_TYPE;
+    //if the list does not begin, return empty list.
+    if(list->type == NULL_TYPE){
         return empty_value;
     }
 
-    Value* new_value = malloc(sizeof(Value));
-    while(list->type != NULL_TYPE){
-
+    //populate an array of pointers in old order.
+    int total_length = length(list);
+    Value* array_of_vals[total_length];
+    for(int i = 0; i < total_length; i++){
+        array_of_vals[i]=makeNewValue(list);
+        if(i != total_length-1){list = cdr(list);}
     }
 
-    switch(list->type){
-        case NULL_TYPE:
-            break;
-        case CONS_TYPE:
-            cons(reverse(cdr(list)), reverse(car(list)));
-            break;
-        case STR_TYPE:
-            break;
+    //work with each elements of the array to reverse the order.
+    for(int i = total_length-1; i>=0; i--){
+        if(i = 0){
+            return array_of_vals[total_length-1];
+        }else{
+            array_of_vals[i]->c.cdr = array_of_vals[i-1];
+        }
     }
-    
-    Value* new_list = malloc(sizeof(Value));
-    return new_list;
 }
 
 int length(Value *value) {
