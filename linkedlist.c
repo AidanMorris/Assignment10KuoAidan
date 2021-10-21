@@ -77,52 +77,83 @@ void display(Value *list) {
 
 Value* makeNewValue(Value* list){
     Value* new_val = malloc(sizeof(Value));
-    switch(car(list)->type){
+    switch(list->type){
         case NULL_TYPE://comment this out later to see if default handles this for me.
             new_val->type=NULL_TYPE;
             break;
+
         case STR_TYPE:
-            new_val = memcpy(malloc(sizeof(Value)), list, sizeof(Value));
-            new_val->s = malloc(sizeof(*list->s));
+            new_val->type = STR_TYPE;
+            new_val->s = malloc(
+                sizeof(char)*(1+strlen(list->s)));
             strcpy(new_val->s, list->s);
             break;
+
         case CONS_TYPE:
-            new_val = memcpy(malloc(sizeof(Value)), list, sizeof(Value));
+            new_val->type = CONS_TYPE;
             new_val->c.car = makeNewValue(car(list));
-            new_val->c.cdr = makeNewValue(cdr(list));
             break;
+
+        case INT_TYPE:
+            new_val->type = INT_TYPE;
+            new_val->i = list->i;
+            break;
+
+        case DOUBLE_TYPE:
+            new_val->type = DOUBLE_TYPE;
+            new_val->d = list->d;
+            break;
+
         default:
-            new_val = memcpy(malloc(sizeof(Value)), list, sizeof(Value));
             break;
     }
     return new_val;
+    // Value* new_val;
+    // switch(car(list)->type){
+    //     case NULL_TYPE://comment this out later to see if default handles this for me.
+    //         new_val->type=NULL_TYPE;
+    //         break;
+    //     case STR_TYPE:
+    //         new_val = memcpy(malloc(sizeof(Value)), list, sizeof(Value));
+    //         new_val->s = malloc(
+    //             sizeof(char)*(1+strlen(list->s)));
+    //         strcpy(new_val->s, list->s);
+    //         break;
+    //     case CONS_TYPE:
+    //         new_val = memcpy(malloc(sizeof(Value)), list, sizeof(Value));
+    //         new_val->c.car = makeNewValue(car(list));
+    //         new_val->c.cdr = makeNewValue(cdr(list));
+    //         break;
+    //     default:
+    //         new_val = memcpy(malloc(sizeof(Value)), list, sizeof(Value));
+    //         break;
+    // }
+    // return new_val;
 }
 
 Value *reverse(Value *list) {
 
-    Value* empty_value = malloc(sizeof(Value));
-        empty_value->type = NULL_TYPE;
+    Value* next_value_in_reverse = makeNull();
     //if the list does not begin, return empty list.
-    if(list->type == NULL_TYPE){
-        return empty_value;
+    while(list->type==CONS_TYPE){
+        Value* new_node = makeNewValue(list);
+        new_node->c.cdr = next_value_in_reverse;
+        list = cdr(list);
+        next_value_in_reverse = new_node;
     }
+    return next_value_in_reverse;
 
-    //populate an array of pointers in old order.
-    int total_length = length(list);
-    Value* array_of_vals[total_length];
-    for(int i = 0; i < total_length; i++){
-        array_of_vals[i]=makeNewValue(list);
-        if(i != total_length-1){list = cdr(list);}
-    }
+    // //populate an array of pointers in old order.
+    // int total_length = length(list);
+    // Value* array_of_vals[total_length];
+    // for(int i = 0; i < total_length; i++){
+    //     array_of_vals[i]=makeNewValue(list);
+    //     if(i != total_length-1){list = cdr(list);}
+    // }
 
-    //work with each elements of the array to reverse the order.
-    for(int i = total_length-1; i>=0; i--){
-        if(i = 0){
-            return array_of_vals[total_length-1];
-        }else{
-            array_of_vals[i]->c.cdr = array_of_vals[i-1];
-        }
-    }
+    // //work with each elements of the array to reverse the order.
+    // for(int i = total_length-1; i>=1; i--){array_of_vals[i]->c.cdr = array_of_vals[i-1];}
+    // return array_of_vals[total_length-1];
 }
 
 int length(Value *value) {
@@ -141,17 +172,17 @@ int length(Value *value) {
 
 void cleanup(Value *list) {
     switch(list->type){
-        case NULL_TYPE:
-            break;
         case CONS_TYPE:
             cleanup(car(list));
             cleanup(cdr(list));
+            free(list);
             break;
         case STR_TYPE:
             free(list->s);
+            free(list);
             break;
         default:
+            free(list);
             break;
     }
-    free(list);
 }
